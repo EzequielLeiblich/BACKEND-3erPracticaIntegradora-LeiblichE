@@ -1,44 +1,53 @@
-# Desafio N°7 Refactor a nuestro login
+# Tercera Entrega: Proyecto Final
 
 ## LEIBLICH Ezequiel Gaston
 
 ## Comisión 43345 - Programación Backend
 
 
-Reestructura de nuestro servidor
+Tercera Entrega: Proyecto Final
+Este repositorio marca la tercera entrega de nuestro proyecto final, donde hemos profundizado en los roles de los usuarios, las autorizaciones y la lógica de compra. Además, hemos mejorado la arquitectura general del servidor para una mayor profesionalización.
 
-Este repositorio contiene el trabajo terminado de la reestructura del servidor, basado en un modelo de capas para una mejor organización y separación de responsabilidades.
+Objetivos
+------------------------------------------------
+Generales
+* Profesionalizar el servidor en términos de estructura y funcionalidad.
+------------------------------------------------
+Específicos
+* Implementar una arquitectura profesional en el servidor, incorporando prácticas como patrones de diseño, mailing y variables de entorno.
+------------------------------------------------
+Modificaciones Realizadas
+* Capa de Persistencia: Hemos modificado la capa de persistencia para aplicar conceptos como Factory (opcional), DAO y DTO. Ahora, el DAO seleccionado puede ser devuelto por una Factory para ser utilizado por la capa de negocio.
 
-Descripción:
+* Patrón Repository: Hemos implementado el patrón Repository para facilitar la interacción entre la capa de negocio y el DAO.
 
-El proyecto ha sido reorganizado en diferentes capas, siguiendo las mejores prácticas de desarrollo:
+* Ruta /current: Hemos modificado la ruta /current para enviar un DTO del usuario con solo la información necesaria, evitando exponer información sensible.
 
-1. Capa de Routing: Encargada de manejar las rutas de la aplicación y la comunicación con el cliente. Aquí se definen los endpoints y se gestionan las peticiones HTTP.
+* Middleware de Autorización: Se ha creado un middleware que trabaja junto con la estrategia "current" para implementar un sistema de autorización y restringir el acceso a ciertos endpoints:
 
-2. Capa de Controlador: Responsable de la lógica de negocio y operaciones. Aquí se realizan las operaciones necesarias para completar las tareas solicitadas, y se comunica con la capa de Persistencia.
+- Solo el administrador puede crear, actualizar y eliminar productos.
+- Solo el usuario puede enviar mensajes al chat.
+- Solo el usuario puede agregar productos a su carrito.
+* Modelo de Ticket: Hemos creado un modelo llamado "Ticket" para formalizar las compras. Este modelo incluye campos como code, purchase_datetime, amount y purchaser.
 
-3. Capa de DAO (Data Access Object): Encargada de la conexión y gestión de datos en la base de datos o sistema de persistencia. Aquí se accede a los datos y se realizan operaciones CRUD (Crear, Leer, Actualizar, Eliminar) necesarias.
+*Ruta de Compra: Hemos implementado la ruta /carts/:cid/purchase en el router de carritos, permitiendo finalizar el proceso de compra del carrito. La compra verifica el stock de los productos al momento de finalizarse:
 
-4. Vistas: Las vistas están correctamente separadas y organizadas. Se han implementado modelos de capas para asegurar una correcta delegación de responsabilidades.
+- Si el producto tiene suficiente stock, se resta del stock y se continúa.
+- Si el producto no tiene suficiente stock, no se agrega al proceso de compra.
+* Servicio de Tickets: Utilizamos el servicio de Tickets para generar un ticket con los datos de la compra. En caso de una compra no completada, se devuelve un arreglo con los IDs de los productos que no pudieron procesarse. El carrito del usuario comprador solo contendrá los productos no comprados.
 
-Configuración de Variables de Entorno
+  ---------------------------------------------------
 
-Todas las partes importantes y datos comprometidos se han movido a un archivo .env para mantenerlos seguros y proteger información sensible. Además, se ha implementado un archivo config.js para leer las variables de entorno y configurar el proyecto adecuadamente.
+Instrucciones:
+  
+1- Clona este repositorio en tu máquina local.
 
-Instrucciones
+2- Configura las variables de entorno en un archivo .env para mantener la seguridad de los datos comprometidos.
 
-Para ejecutar el proyecto, sigue los siguientes pasos:
+4- Instala las dependencias necesarias utilizando npm install.
 
-1. Clona este repositorio en tu máquina local.
+5- Ejecuta el servidor con npm start o el comando correspondiente según tu configuración.
 
-2. Crea un archivo .env y coloca en él las variables de entorno necesarias, como credenciales de la base de datos o claves de acceso.
+¡Listo! El proyecto ha sido profundamente mejorado para una experiencia de usuario más sólida y segura.
 
-3. Configura el archivo config.js para leer las variables de entorno y establecer la configuración del proyecto.
-
-4. Instala las dependencias necesarias ejecutando npm install.
-
-5. Ejecuta el servidor con npm start o el comando que corresponda según tu configuración.
-
-¡Listo! El proyecto se ejecutará con la nueva estructura de capas y las variables de entorno configuradas de manera segura.
-
-¡Gracias por revisar este proyecto reestructurado!
+Si tienes alguna pregunta o necesitas asistencia, no dudes en comunicarte con nosotros. ¡Gracias por revisar esta tercera entrega de nuestro proyecto final!
