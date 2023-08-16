@@ -1,5 +1,4 @@
 import UserService from "../services/user.service.js";
-
 import mongoose from 'mongoose';
 
 export default class UserController {
@@ -110,5 +109,4 @@ export default class UserController {
             return response;
         }
     }
-
 }

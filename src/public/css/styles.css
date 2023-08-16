@@ -204,18 +204,9 @@ h2 {
   padding-bottom: 1em;
 }
 
-.logoSession{
-  display: flex;
-  justify-content:space-between;
-  align-items: center;
-  margin-left: 1em;
-  margin-right: 1em;
-  margin-top: 1em;
-}
-
-.logoCart {
-  display: flex;
-  justify-content:right;
+.logo{
+  display:flex;
+  justify-content: space-between;
   align-items: center;
   margin-left: 1em;
   margin-right: 1em;
@@ -223,7 +214,7 @@ h2 {
 }
 
 .logoS{
-  height: 10vh;
+  height: 8vh;
 }
 
 .logoS:hover{

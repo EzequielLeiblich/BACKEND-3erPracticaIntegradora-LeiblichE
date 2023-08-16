@@ -12,16 +12,13 @@ function getCartById() {
         .then((response) => response.json())
         .then((cart) => {
         
-        // Head:
         let htmlHead = "";
         htmlHead += `
                     <h1>Carrito:</h1>
                     `;
         head.innerHTML = htmlHead;
         
-        // Cuerpo:
         let htmlCartCID = ""
-        
         htmlCartCID += `
           <thead>
             <tr>
@@ -38,7 +35,7 @@ function getCartById() {
           const {
             title,
             description,
-            thumbnails,
+            thumbnail,
             price
           } = product.product;
           const quantity = product.quantity;
@@ -46,8 +43,7 @@ function getCartById() {
                           <tr>
                             <td id="${title}">${title}</td>
                             <td class="description">${description}</td>
-                            <td><img src="${thumbnails[0]}" alt="${title}" class="Imgs"></td>
-                            <td><img src="${thumbnails[1]}" alt="${title}" class="Imgs"></td>
+                            <td><img src="${thumbnail}" alt="${title}" class="Img"></td>
                             <td>$${price}</td>
                             <td>${quantity}</td>
                           </tr>`;

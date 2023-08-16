@@ -1,7 +1,6 @@
 
 export const logout = async (req, res) => {
     try {
-        // Destruir sesión
         req.session.destroy();
         res.redirect('/login');
     } catch (error) {

@@ -9,11 +9,11 @@ import config from './config.js';
 
 // RUTAS
 
-import routerProducts from "./routes/products.router.js"
-import routerCarts from "./routes/cart.router.js"
-import routerViews from "./routes/views.router.js"
-import routerSession from "./routes/session.router.js"
-import routerMessage from "./routes/message.router.js"
+import productsRouter from "./routes/products.router.js"
+import cartRouter from "./routes/cart.router.js"
+import viewsRouter from "./routes/views.router.js"
+import userRouter from "./routes/session.router.js"
+import msmRouter from "./routes/message.router.js"
 
 // CONTROLLERS
 
@@ -118,8 +118,8 @@ app.use((req, res, next) => {
 })
 
 // ROUTES
-app.use("/", routerViews);
-app.use("/api/chat", routerMessage);
-app.use("/api/carts", routerCarts);
-app.use("/api/sessions", routerSession);
-app.use("/api/products", routerProducts);
+app.use("/", viewsRouter);
+app.use("/api/chat", msmRouter);
+app.use("/api/carts", cartRouter);
+app.use("/api/sessions", userRouter);
+app.use("/api/products", productsRouter);

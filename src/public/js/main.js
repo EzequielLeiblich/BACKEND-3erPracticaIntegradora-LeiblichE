@@ -1,13 +1,13 @@
 const socket = io();
 
-fetch('/api/user')
+fetch('/api/sessions/current')
   .then((response) => response.json())
   .then((data) => {
-    let user = data.user;
+    let user = data;
     Swal.fire({
       icon: 'success',
       title: '¡Bienvenido!',
-      text: `Hola ${user.first_name}, has iniciado sesión con éxito.`,
+      text: `Hola ${user.name}, has iniciado sesión con éxito.`,
     });
   })
   .catch((error) => {
@@ -15,36 +15,34 @@ fetch('/api/user')
   });
 
 const tableProd = document.getElementById('tableProd');
+
 function allProducts() {
   console.log("Primera carga - General")
-  socket.on("productos", (data) => {
-    const products = data.products;
+  socket.on("products", (products) => {
+    let productos = products;
     let htmlProductos = "";
     htmlProductos += `
     <thead>
       <tr>
-        <th>Modelo</th>
-        <th>Descripción</th>
-        <th>Categoria</th>
-        <th>Img</th>
-        <th>Stock</th>
-        <th>Precio</th>
-        <th>Unids a comprar</th>
-        <th>Cart</th>
+          <th>Modelo</th>
+          <th>Descripción</th>
+          <th>Img</th>
+          <th>Stock</th>
+          <th>Precio</th>
+          <th>Unids. a comprar</th>
+          <th>Cart</th>
       </tr>
     </thead>`;
-
-    products.docs.forEach((product) => {
+    productos.docs.forEach((product) => {
       htmlProductos += `
           <tr>
             <td id="${product.title}">${product.title}</td>
             <td class="description">${product.description}</td>
-            <td class="category">${product.category}</td>
             <td><img src="${product.thumbnail}" alt="${product.title}" class="Img"></td>
             <td>${product.stock} Und.</td>
             <td>$${product.price}</td>
             <td><input type="number" id="cantidadInput${product._id}" min="1" max="${product.stock}" value="1"></td>
-            <td><p class="boton" id="agr${product._id}">+ Cart</p></td>
+            <td><h2 class="boton" id="agr${product._id}">+ Cart</h2></td>
           </tr>`;
     });
     tableProd.innerHTML = htmlProductos;
@@ -86,7 +84,6 @@ function allProducts() {
         })
     }
   });
-
 }
 
 allProducts()
