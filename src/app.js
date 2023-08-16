@@ -4,7 +4,7 @@ import express, { urlencoded } from 'express';
 import __dirname from './utils.js'
 import handlebars from 'express-handlebars';
 import mongoose from 'mongoose';
-import { Server, Socket } from 'socket.io';
+import { Server } from 'socket.io';
 import config from './config.js';
 
 // RUTAS
@@ -59,7 +59,7 @@ app.use(passport.initialize());
 // SERVER HTTP EXPRESS
 
 const expressServer = app.listen(config.PORT, () => {
-  console.log("Servidor levantado");
+  console.log(`Servidor levantado en el puerto ${config.PORT}`);
 })
 
 // SERVER SOCKET.IO
@@ -77,12 +77,10 @@ socketServer.on("connection", async (socket) => {
   
   // PRODUCTS
 
-  // Se envian todos los productos al conectarse
   const productsResponse = await viewsController.getAllProductsControllerV();
   const productList = productsResponse.result;
   socket.emit('products', productList);
 
-  // Recibo los filtros de main.js en busquedaProducts:
   socket.on('busquedaFiltrada', async (busquedaProducts) => {
     const {
       limit,
@@ -105,7 +103,6 @@ socketServer.on("connection", async (socket) => {
 
   // CARTS
 
-  // Enviamos los carritos a los usuarios: 
   socket.on('cartid', async (cartID) => {
     const cart = await viewsController.getCartByIdV(cartID);
     const cartResult = cart.result;
@@ -115,14 +112,12 @@ socketServer.on("connection", async (socket) => {
 });
 
 // MIDDLEWARE (all requests have access to socket server)
-
 app.use((req, res, next) => {
   req.socketServer = socketServer;
   next();
 })
 
 // ROUTES
-
 app.use("/", routerViews);
 app.use("/api/chat", routerMessage);
 app.use("/api/carts", routerCarts);

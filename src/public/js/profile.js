@@ -1,4 +1,4 @@
-/*
+
 export const logout = async (req, res) => {
     try {
         // Destruir sesión
@@ -10,4 +10,3 @@ export const logout = async (req, res) => {
         });
     }
 };
-*/

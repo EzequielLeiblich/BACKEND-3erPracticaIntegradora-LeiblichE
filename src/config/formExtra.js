@@ -1,21 +1,13 @@
 import jwt from 'jsonwebtoken';
-import {
-    JWT_SECRET,
-    JWT_COOKIE
-} from '../config.js';
+import config from "../config.js";
 
-// Import UserController:
 import UserController from '../controllers/userController.js';
 
-// Import UserController:
 const userController = new UserController();
 
-// Función para completeProfile: 
 export const completeProfile = async (req, res) => {
 
-    const userId = req.cookies.userId; // Obtener el valor de la cookie
-    // Resto del código para completar el perfil...
-
+    const userId = req.cookies.userId;
     console.log('Valor de la cookie userId:', userId);
 
     const last_name = req.body.last_name;
@@ -24,22 +16,14 @@ export const completeProfile = async (req, res) => {
     const password = req.body.password;
 
     try {
-
-        // Crear el actualizar el  usuario con los datos del formulario:
         const updateUser = {
             last_name,
             email,
             age,
             password,
         };
-
-        // Actualizar el usuario en la base de datos:
-
         const responseControllerU = await userController.updateUserController(userId, updateUser);
-        // Extraermos solo el resultado:
         const userCompleteDB = responseControllerU.result;
-
-        // Generar el token JWT:
         let token = jwt.sign({
             email: userCompleteDB.email,
             first_name: userCompleteDB.first_name,
@@ -47,16 +31,14 @@ export const completeProfile = async (req, res) => {
             role: userCompleteDB.role,
             cart: userCompleteDB.cart,
             userID: userCompleteDB._id
-        }, JWT_SECRET, {
+        }, config.JWT_SECRET, {
             expiresIn: '7d'
         });
 
-        // Token jwt: 
-        res.cookie(JWT_COOKIE, token, {
+        res.cookie(config.JWT_COOKIE, token, {
             httpOnly: true
         })
-
-        // Redirigir al usuario a la vista de productos:
+        
         res.send({
             status: 'success',
             redirectTo: '/products'

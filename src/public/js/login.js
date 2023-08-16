@@ -18,7 +18,7 @@ form.addEventListener('submit', async (e) => {
         if (response.ok) {
             console.log('Usuario logueado con éxito.');
             form.reset();
-            window.location.replace('/realtimeproducts');
+            window.location.replace('/products');
         } 
         else {
             Swal.fire({
