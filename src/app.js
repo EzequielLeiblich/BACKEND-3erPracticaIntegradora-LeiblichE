@@ -14,6 +14,7 @@ import cartRouter from "./routes/cart.router.js"
 import viewsRouter from "./routes/views.router.js"
 import userRouter from "./routes/session.router.js"
 import msmRouter from "./routes/message.router.js"
+import ticketRouter from "./routes/ticket.router.js";
 
 // CONTROLLERS
 
