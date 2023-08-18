@@ -4,7 +4,6 @@ export default class MessageService {
     constructor() {
         this.messageDao = new MessageDAO();
     }
-    
     // Métodos MessageService: 
     async createMessageService(message) {
         let response = {};

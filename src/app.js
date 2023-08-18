@@ -51,10 +51,10 @@ app.set("view engine", "handlebars");
 // PASSPORT
 
 app.use(cookieParser());
-initializePassportLocal();
+app.use(passport.initialize());
 initializePassportJWT();
 initializePassportGitHub();
-app.use(passport.initialize());
+initializePassportLocal();
 
 // SERVER HTTP EXPRESS
 
@@ -78,8 +78,9 @@ socketServer.on("connection", async (socket) => {
   // PRODUCTS
 
   const productsResponse = await viewsController.getAllProductsControllerV();
-  const productList = productsResponse.result;
-  socket.emit('products', productList);
+  // const productList = productsResponse.result;
+  // socket.emit('products', productList);
+  socket.emit('products', productsResponse.result);
 
   socket.on('busquedaFiltrada', async (busquedaProducts) => {
     const {
@@ -90,24 +91,25 @@ socketServer.on("connection", async (socket) => {
       filtroVal
     } = busquedaProducts;
     const productsResponse = await viewsController.getAllProductsControllerV(limit, page, sort, filtro, filtroVal);
-    const productsFilter = productsResponse.result
-    socket.emit('products', productsFilter);
+    // const productsFilter = productsResponse.result
+    // socket.emit('products', productsFilter);
+    socket.emit('products', productsResponse.result);
   });
 
   // MESSAGES: 
 
   // Enviamos todos los mensajes al usuario:
   const messages = await viewsController.getAllMessageControllerV();
-  const messageResult = messages.result;
+  // const messageResult = messages.result;
   socket.emit("messages", messageResult);
 
-  // CARTS
+  // // CARTS
 
-  socket.on('cartid', async (cartID) => {
-    const cart = await viewsController.getCartByIdV(cartID);
-    const cartResult = cart.result;
-    socket.emit('cartuser', cartResult);
-  });
+  // socket.on('cartid', async (cartID) => {
+  //   const cart = await viewsController.getCartByIdV(cartID);
+  //   const cartResult = cart.result;
+  //   socket.emit('cartuser', cartResult);
+  // });
   
 });
 
@@ -123,3 +125,4 @@ app.use("/api/chat", msmRouter);
 app.use("/api/carts", cartRouter);
 app.use("/api/sessions", userRouter);
 app.use("/api/products", productsRouter);
+app.use('/api/tickets', ticketRouter);

@@ -1,15 +1,11 @@
 import TicketService from "../services/tickets.service.js";
-
 import mongoose from "mongoose";
 
 export default class TicketController {
-
     constructor() {
         this.ticketService = new TicketService();
     }
-
     // Métodos TicketController: 
-
     async createTicketController(req, res) {
         let response = {};
         try {

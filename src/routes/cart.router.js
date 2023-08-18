@@ -29,6 +29,11 @@ cartRouter.post('/:cid/products/:pid/quantity/:quantity', passport.authenticate(
   res.status(result.statusCode).send(result);
 });
 
+cartRouter.post('/:cid/purchase', async (req, res) =>{
+  const result = await cartController.purchaseProductsInCartController(req, res);
+  res.status(result.statusCode).send(result);
+})
+
 cartRouter.delete('/:cid/products/:pid', async (req, res) => {
   const result = await cartController.deleteProductFromCartController(req, res);
   res.status(result.statusCode).send(result);

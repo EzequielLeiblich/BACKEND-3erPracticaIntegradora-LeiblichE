@@ -1,22 +1,13 @@
-// github.passport.js
 import passport from 'passport';
 import { Strategy as GitHubStrategy} from 'passport-github2';
 import config from "../config.js";
 
-// Import UserController:
 import UserController from '../controllers/userController.js';
-
-// Import CartController:
 import CartController from '../controllers/cartController.js';
 
-
-// Instancia de UserController: 
 const userController = new UserController();
-
-// Instancia de CartController: 
 const cartController = new CartController();
 
-// Función de GitHub passport para expotarla:
 export const initializePassportGitHub = () => {
 
     passport.use('github', new GitHubStrategy({
@@ -26,23 +17,14 @@ export const initializePassportGitHub = () => {
 }, async (accessToken, refreshToken, profile, done) => {
 
         try {
-
-            // Buscamos al usuario en la base de datos: 
             const responseControllerU = await userController.getUserByEmailOrNameOrIdController(profile._json.name);
-
-             // Extraermos solo el resultado:
             const exist = responseControllerU.result;
-
             if (exist) {
                 return done(null, exist);
             } 
             if(!exist) {
-
-                // Crearmmos un carrito para el usuario: 
                 const responseControllerC = await cartController.createCartController();
-                // Extraemos solo el resultado: 
                 const cart = responseControllerC.result;
-
                 const newUser = {
                     first_name: profile._json.name,
                     last_name: "X",
@@ -52,15 +34,10 @@ export const initializePassportGitHub = () => {
                     role: "user",
                     cart: cart._id,
                 };
-
-                // Creamos un nuevo usuario:
                 const responseControllerU = await userController.createUserControler(newUser);
-                // Extraemos solo el resultado: 
                 const user = responseControllerU.result;
-
                 return done(null, user);
             };
-
         } catch (error) {
             return done(error);
         }

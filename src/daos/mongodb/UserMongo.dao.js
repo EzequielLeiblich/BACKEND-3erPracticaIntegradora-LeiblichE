@@ -54,5 +54,4 @@ export default class UserDAO {
             throw new Error("Error al actualizar el usuario. Error original: " + error.message);
         }
     };
-
 }

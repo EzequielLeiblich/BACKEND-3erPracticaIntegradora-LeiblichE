@@ -2,13 +2,10 @@ import UserService from "../services/user.service.js";
 import mongoose from 'mongoose';
 
 export default class UserController {
-
     constructor() {
         this.userService = new UserService();
     }
-
     // Métodos UserController: 
-
     async createUserControler(info) {
         let response = {};
         try {

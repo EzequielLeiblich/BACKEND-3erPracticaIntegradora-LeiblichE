@@ -50,5 +50,4 @@ export const completeProfile = async (req, res) => {
             message: 'Error al completar el perfil. Inténtalo de nuevo.'
         });
     }
-
 };

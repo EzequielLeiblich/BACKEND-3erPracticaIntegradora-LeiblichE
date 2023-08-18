@@ -13,7 +13,6 @@ dotenv.config({
   path: mode == 'dev' ? '.env.development' : '.env.production'
 })
 
-dotenv.config()
 
 export default {
   // MongoDB

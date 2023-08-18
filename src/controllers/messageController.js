@@ -1,15 +1,11 @@
 import MessageService from '../services/message.service.js'
-
 import mongoose from 'mongoose';
 
 export default class MessageController {
-
     constructor() {
         this.messageService = new MessageService();
     }
-
     // Métodos MessageController:
-
     async createMessageController(req, res) {
         let response = {};
         const message = req.body;
@@ -88,7 +84,7 @@ export default class MessageController {
                 response.statusCode = responseService.statusCode;
                 if (responseService.status === "success") {
                     response.result = responseService.result;
-                    // Actualización Real Time:
+                    // Real Time:
                     const messages = await this.messageService.getAllMessageService();
                     const messageResult = messages.result;
                     req.socketServer.sockets.emit('messages', messageResult);
@@ -106,5 +102,4 @@ export default class MessageController {
             });
         };
     };
-
 }

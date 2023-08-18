@@ -1,5 +1,4 @@
 const socket = io();
-
 const chatTable = document.getElementById('chat-table');
 const btnEnviar = document.getElementById('btnEnv');
 const userInput = document.getElementById("usuario");

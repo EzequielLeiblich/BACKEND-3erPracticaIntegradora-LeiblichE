@@ -1,11 +1,7 @@
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 import config from "../config.js";
-
-// Imports DTOs: 
-import {
-    CurrentUserDTO
-} from './DTO/user.dto.js';
+import {CurrentUserDTO} from './DTO/user.dto.js';
 
 export const registerUser = (req, res, next) => {
     passport.authenticate('register', {
@@ -81,12 +77,9 @@ export const authenticateWithGitHub = (req, res, next) => {
 };
 
 export const getProfileUser = async (req, res) => {
-
     const user = new CurrentUserDTO(req.user);
-
     res.render('profile', {
         title: 'Perfil',
         user: user
     });
-
 };

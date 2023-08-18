@@ -1,15 +1,11 @@
 import ProductService from '../services/products.service.js';
-
 import mongoose from 'mongoose';
 
 export default class ProductController {
-
     constructor() {
         this.productService = new ProductService();
     }
-    
     // Métodos ProductController:
-
     async createProductController(req, res) {
         let response = {};
         try {
@@ -176,7 +172,7 @@ export default class ProductController {
                 response.statusCode = responseService.statusCode;
                 if (responseService.status === "success") {
                     response.result = responseService.result;
-                    // Actualización Real Time: 
+                    // Real Time: 
                     const products = await this.productService.getAllProductsService();
                     req.socketServer.sockets.emit('products', products.result);
                 }
@@ -195,5 +191,4 @@ export default class ProductController {
             return response;
         }
     }
-
 }

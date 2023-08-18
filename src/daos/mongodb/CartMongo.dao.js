@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { cartModel } from "./models/carts.model.js";
+import {ticketModel} from "./models/ticket.model.js";
 import config from "../../config.js";
 
 export default class CartsDAO {
@@ -57,6 +58,22 @@ export default class CartsDAO {
     }
   };
 
+  async addTicketToCart(cid, ticketID) {
+    try {
+      const cart = await this.getCartById(cid);
+      const existingTicketIndex = cart.tickets.findIndex(t => t.ticketsRef.toString() === ticketID);
+      if (existingTicketIndex === -1) {
+        cart.tickets.push({
+          ticketsRef: ticketID
+        });
+        await cart.save();
+      }
+      return cart;
+    } catch (error) {
+      throw new Error("Error al agregar el ticket al carrito - DAO. Original error: " + error.message);
+    }
+  }
+
   async deleteProductFromCart(cid, pid) {
     try {
       const cart = await this.getCartById(cid);
@@ -88,10 +105,16 @@ export default class CartsDAO {
   };
 
   async deleteAllProductFromCart(cartId) {
-    const cart = await this.consultarCartPorId(cartId);
-    cart.products = [];
-    await cart.save();
-    return;
+    try {
+      const cart = await this.consultarCartPorId(cartId);
+      cart.products = [];
+      await cart.save();
+      return {
+        status: 'success'
+      };
+    } catch (error) {
+      throw new Error("Error al borrar todos los productos en carrito - DAO. Original error: " + error.message);
+    }
   };
 
   async updateCart(cid, updatedCartFields) {

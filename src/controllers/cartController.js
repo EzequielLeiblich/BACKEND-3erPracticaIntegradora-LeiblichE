@@ -1,14 +1,11 @@
 import CartService from "../services/carts.service.js";
-
 import mongoose from 'mongoose';
 
 export default class CartController {
     constructor() {
         this.cartService = new CartService()
     }
-
     // Métodos CartController:
-
     async createCartController(req, res) {
         let response = {};
         try {
@@ -60,9 +57,11 @@ export default class CartController {
             return response;
         } catch (error) {
             console.error('Error:', error.message);
-            res.status(500).json({
-                error: 'Error al consultar el carrito: ' + error.message
-            });
+            response.status = "error";
+            response.message = 'Error al consultar el carrito: ' + error.message;
+            response.error = error.message;
+            response.statusCode = 500;
+            return response;
         };
     };
 
@@ -137,6 +136,68 @@ export default class CartController {
         };
     };
 
+    async purchaseProductsInCartController(req, res) {
+        let response = {};
+    
+        try {
+            const cartID = req.params.cid;
+            const purchaseInfo = req.body;
+            const products = purchaseInfo.products;
+            const totalPrice = purchaseInfo.totalPrice;
+            const userEmail = purchaseInfo.userEmailAddress;
+    
+            if (!cartID) {
+                response.status = "error";
+                response.message = `No se proporcionó ningún ID de carrito.`;
+                response.statusCode = 400;
+            } else if (!mongoose.Types.ObjectId.isValid(cartID)) {
+                response.status = "error";
+                response.message = `El ID de carrito proporcionado no es válido.`;
+                response.statusCode = 400;
+            } else if (!purchaseInfo || !Array.isArray(products) || products.length === 0) {
+                response.status = "error";
+                response.message = `No se enviaron los productos a comprar o el formato es inválido.`;
+                response.statusCode = 400;
+            } else if (typeof totalPrice !== 'number' || totalPrice <= 0) {
+                response.status = "error";
+                response.message = `El precio total debe ser un número válido y mayor que cero.`;
+                response.statusCode = 400;
+            } else if (!userEmail) {
+                response.status = "error";
+                response.message = `El correo electrónico del usuario no fue proporcionado.`;
+                response.statusCode = 400;
+            } else {
+                for (const productInfo of products) {
+                    if (!productInfo.databaseProductID || !mongoose.Types.ObjectId.isValid(productInfo.databaseProductID)) {
+                        response.status = "error";
+                        response.message = `Uno o más productos tienen un formato inválido.`;
+                        response.statusCode = 400;
+                        return res.status(response.statusCode).json(response);
+                    }
+                }
+                const responseService = await this.cartService.purchaseProductsInCartService(cartID, purchaseInfo, totalPrice, userEmail);
+                response.status = responseService.status;
+                response.message = responseService.message;
+                response.statusCode = responseService.statusCode;
+                if (responseService.status === "success") {
+                    response.result = responseService.result;
+                };
+                if (responseService.status === "error") {
+                    response.error = responseService.status;
+                };
+            };
+            console.log(response);
+            return response
+        } catch (error) {
+            console.error('Error:', error.message);
+            response.status = "error";
+            response.message = "Error al procesar la compra: " + error.message;
+            response.error = error.message;
+            response.statusCode = 500;
+            return res.status(response.statusCode).json(response);
+        }
+    }
+
     async deleteProductFromCartController(req, res) {
         let response = {};
         try {
@@ -174,9 +235,11 @@ export default class CartController {
             return response;
         } catch (error) {
             console.error('Error: ', error.message);
-            res.status(500).json({
-                error: "Error al eliminar un producto del carrito: " + error.message
-            });
+            response.status = "error";
+            response.message = "Error al eliminar producto del carrito: " + error.message;
+            response.error = error.message;
+            response.statusCode = 500;
+            return response;
         };
     };
 

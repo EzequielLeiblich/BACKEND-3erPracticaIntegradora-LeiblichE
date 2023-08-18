@@ -7,11 +7,9 @@ export default class TicketDAO {
     // MONGOOSE
     connection = mongoose.connect( config.MONGO_URL );
 
-    async createTicket() {
+    async createTicket(ticketInfo) {
         try {
-            const result = await ticketModel.create({
-                ticketsRef: []
-            });
+            const result = await ticketModel.create(ticketInfo);
             return result;
         } catch (error) {
             throw new Error("No se pudo crear la colección de tickets para el usuario - DAO. Error original: " + error.message);
@@ -20,23 +18,12 @@ export default class TicketDAO {
 
     async getTicketsByID(tid) {
         try {
-            const result = await ticketsModel.findOne({
+            const result = await ticketModel.findOne({
                 _id: tid
             }).populate('tickets.ticket');
             return result;
         } catch (error) {
             throw new Error("No se pudieron obtener los tickets del usuario - DAO. Error original: " + error.message);
         }
-    };
-
-    async addTicketToTickets(tid, ticket) {
-        try {
-            const tickets = await ticketsModel.findOne({ _id: tid });
-            tickets.tickets.push({ ticket: ticket });
-            await tickets.save();
-            return tickets;
-        } catch (error) {
-            throw new Error("No se pudo agregar el ticket a la colección de tickets del usuario - DAO. Error original: " + error.message);
-        }
-    };    
+    }; 
 }
