@@ -14,7 +14,11 @@ const productSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
-    }
+    }, 
+    price: {
+        type: Number,
+        required: true,
+    },
 });
 const ticketSchema = new mongoose.Schema({
     code: {
@@ -25,13 +29,14 @@ const ticketSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
-    products: [productSchema],
-    amount: {
-        type: Number,
-    },
+    successfulProducts: [productSchema],
+    failedProducts: [productSchema],
     purchase: {
         type: String,
     },
+    amount: {
+        type: Number,
+    }
 });
 
 export const ticketModel = mongoose.model(collection, ticketSchema);

@@ -143,7 +143,6 @@ export default class CartController {
             const cartID = req.params.cid;
             const purchaseInfo = req.body;
             const products = purchaseInfo.products;
-            const totalPrice = purchaseInfo.totalPrice;
             const userEmail = purchaseInfo.userEmailAddress;
     
             if (!cartID) {
@@ -158,10 +157,6 @@ export default class CartController {
                 response.status = "error";
                 response.message = `No se enviaron los productos a comprar o el formato es inválido.`;
                 response.statusCode = 400;
-            } else if (typeof totalPrice !== 'number' || totalPrice <= 0) {
-                response.status = "error";
-                response.message = `El precio total debe ser un número válido y mayor que cero.`;
-                response.statusCode = 400;
             } else if (!userEmail) {
                 response.status = "error";
                 response.message = `El correo electrónico del usuario no fue proporcionado.`;
@@ -175,7 +170,7 @@ export default class CartController {
                         return res.status(response.statusCode).json(response);
                     }
                 }
-                const responseService = await this.cartService.purchaseProductsInCartService(cartID, purchaseInfo, totalPrice, userEmail);
+                const responseService = await this.cartService.purchaseProductsInCartService(cartID, purchaseInfo, userEmail);
                 response.status = responseService.status;
                 response.message = responseService.message;
                 response.statusCode = responseService.statusCode;
@@ -191,7 +186,7 @@ export default class CartController {
         } catch (error) {
             console.error('Error:', error.message);
             response.status = "error";
-            response.message = "Error al procesar la compra: " + error.message;
+            response.message = "Error al procesar la compra - Controller: " + error.message;
             response.error = error.message;
             response.statusCode = 500;
             return res.status(response.statusCode).json(response);

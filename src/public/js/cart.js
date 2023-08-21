@@ -113,27 +113,6 @@ function updateTotalPrice(products) {
   totalPriceSpan.textContent = ` $ ${totalPrice}`;
   const finalizarCompraBtn = document.getElementById('finalizarCompraBtn');
   finalizarCompraBtn.addEventListener('click', async () => {
-    const productsWithoutStock = products.filter(product => product.product.stock === 0);
-    if (productsWithoutStock.length > 0) {
-      Swal.fire({
-        title: 'Advertencia',
-        text: 'Tu carrito tiene productos sin stock. Debes eliminar estos productos del carrito antes de continuar con la compra.',
-        icon: 'warning',
-        confirmButtonText: 'Aceptar',
-      });
-      return;
-    }
-    const productsWithInvalidQuantity = products.filter(product => product.quantity > product.product.stock);
-    if (productsWithInvalidQuantity.length > 0) {
-      Swal.fire({
-        title: 'Advertencia',
-        text: 'Algunos productos en tu carrito tienen cantidades mayores al stock disponible, por ende no será posible procesar la compra. Ajusta las unidades a comprar y luego podrás continuar con el cierre de la compra.',
-        icon: 'warning',
-        confirmButtonText: 'Cerrar',
-      });
-      return;
-    }
-
     const confirmationResult = await Swal.fire({
       title: 'Confirmar compra',
       text: '¿Estás seguro de que deseas finalizar la compra?',
@@ -143,7 +122,7 @@ function updateTotalPrice(products) {
       cancelButtonText: 'Cancelar',
     });
     if (confirmationResult.isConfirmed) {
-      processPurchase(products, totalPrice);
+      processPurchase(products);
       const processingAlert = await Swal.fire({
         title: 'Compra finalizada',
         text: 'En breve podrás acceder a la boleta de tu compra en la sección de tickets del carrito. ',
@@ -178,7 +157,7 @@ function deleteToCart(products, productID) {
     });
 }
 
-function processPurchase(products, totalPrice) {
+function processPurchase(products) {
   fetch('/api/sessions/current')
     .then(response => response.json())
     .then(data => {
@@ -189,7 +168,8 @@ function processPurchase(products, totalPrice) {
           cartProductID: product._id,
           databaseProductID: product.product._id,
           quantity: product.quantity,
-          title: product.product.title
+          title: product.product.title,
+          price: product.product.price,
         };
       });
       const purchaseData = {

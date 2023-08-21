@@ -99,10 +99,9 @@ socketServer.on("connection", async (socket) => {
 
   // MESSAGES: 
 
-  // Enviamos todos los mensajes al usuario:
   const messages = await viewsController.getAllMessageControllerV();
   // const messageResult = messages.result;
-  socket.emit("messages", messageResult);
+  socket.emit("messages", messages.result);
 
   // // CARTS
 

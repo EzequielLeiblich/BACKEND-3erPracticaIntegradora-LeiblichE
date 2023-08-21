@@ -104,25 +104,34 @@ export default class CartService {
         return response;
     };
 
-    async purchaseProductsInCartService(cartID, purchaseInfo, total, userEmail) {
+    async purchaseProductsInCartService(cartID, purchaseInfo, userEmail) {
         let response = {};
         try {
+            const successfulProducts = [];
+            const failedProducts = [];
+            let totalAmount = 0; 
             for (const productInfo of purchaseInfo.products) {
                 const databaseProductID = productInfo.databaseProductID;
                 const quantityToPurchase = productInfo.quantity;
                 const productFromDB = await this.productService.getProductByIdService(databaseProductID);
                 if (!productFromDB) {
-                    response.status = 'error';
-                    response.message = `No se encontró ningún producto con el ID ${databaseProductID}.`;
-                    response.statusCode = 404;
-                    return response;
+                    failedProducts.push(productInfo);
+                    continue;
                 }
                 if (productFromDB.result.stock < quantityToPurchase) {
-                    response.status = 'error';
-                    response.message = `No hay suficiente stock para el producto con el ID ${databaseProductID}.`;
-                    response.statusCode = 400;
-                    return response;
+                    failedProducts.push(productInfo);
+                    continue;
                 }
+                if (productFromDB.result.stock >= quantityToPurchase) {
+                    successfulProducts.push(productInfo);
+                    totalAmount += productInfo.price * quantityToPurchase;
+                    continue;
+                }
+            }
+            for (const productInfo of successfulProducts) {
+                const databaseProductID = productInfo.databaseProductID;
+                const quantityToPurchase = productInfo.quantity;
+                const productFromDB = await this.productService.getProductByIdService(databaseProductID);
                 const updatedProduct = {
                     stock: productFromDB.result.stock - quantityToPurchase
                 };
@@ -130,13 +139,20 @@ export default class CartService {
                 await this.deleteProductFromCartService(cartID, productInfo.cartProductID);
             }
             const ticketInfo = {
-                purchase: userEmail,
-                products: purchaseInfo.products.map(productInfo => ({
+                successfulProducts: successfulProducts.map(productInfo => ({
+                    product: productInfo.databaseProductID, 
+                    quantity: productInfo.quantity, 
+                    title: productInfo.title, 
+                    price: productInfo.price,
+                })),
+                failedProducts: failedProducts.map(productInfo => ({
                     product: productInfo.databaseProductID,
                     quantity: productInfo.quantity,
-                    title: productInfo.title
+                    title: productInfo.title, 
+                    price: productInfo.price,
                 })),
-                amount: total
+                purchase: userEmail,
+                amount: totalAmount
             };
             const ticketServiceResponse = await this.ticketService.createTicketService(ticketInfo);
             if (ticketServiceResponse.status == "error") {
@@ -146,7 +162,7 @@ export default class CartService {
                 response.statusCode = 500;
                 return response;
             }
-            const ticketID = ticketServiceResponse.result._id; // Obtener el ID del ticket
+            const ticketID = ticketServiceResponse.result._id;
             const addTicketResponse = await this.addTicketToCartService(cartID, ticketID);
             if (addTicketResponse.status === 'error') {
                 response.status = 'error';
