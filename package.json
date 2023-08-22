@@ -6,7 +6,9 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev-D": "nodemon src/config.js --mode dev --exec \"nodemon src/server.js\"",
+    "dev-P": "nodemon src/config.js --mode prod --exec \"nodemon src/server.js\""
   },
   "keywords": [],
   "author": "",
