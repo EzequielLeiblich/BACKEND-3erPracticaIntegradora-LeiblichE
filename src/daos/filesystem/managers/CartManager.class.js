@@ -1,55 +1,53 @@
-import fs from 'fs'
-import { v4 as uuidV4 } from 'uuid';
+import fs from "fs";
+import { v4 as uuidV4 } from "uuid";
 
-export default class CartManager {
-  constructor(path){
-    this.path = path;
-  }
+const path = "src/classes/files/carts.json";
 
-  async #loadCartsFromPath() {
-    let carts = []
+export default class ManagerCarts {
+  consultarCarts = async () => {
+    console.log("Existe.", fs.existsSync(path));
+    if (fs.existsSync(path)) {
+      const data = await fs.promises.readFile(path, "utf-8");
+      const carts = JSON.parse(data);
+      return carts;
+    } else {
+      return [];
+    }
+  };
 
-    if (fs.existsSync(this.path)) {
+  crearCart = async () => {
+    const carts = await this.consultarCarts();
+    carts.push({id: uuidV4(), products: [] });
+    return await fs.promises.writeFile(path, JSON.stringify(carts, null, "\t"));
+  };
 
-      let data = await fs.promises.readFile(this.path, "utf-8");
-      carts = JSON.parse(data)
+  consultarCartPorId = async (id) => {
+    const carts = await this.consultarCarts();
+    const cart = carts.find((cart) => {
+      return cart.id == id;
+    });
+    return cart ? cart : "Carrito no encontrado.";
+  };
+
+  agregarProductoEnCarrito = async (idCart, idProduct) => {
+    const cart = await this.consultarCartPorId(idCart);
+    const index = cart.products.findIndex((product) => {
+      return product.id == idProduct
+    });
+
+    if (index == -1){
+      cart.products.push({id: idProduct, quantity: 1})
+    } else {
+      cart.products[index].quantity++;
     }
 
-    return carts
+    const carts = await this.consultarCarts() 
+    const cartIndex = carts.findIndex((cartIterator) => {
+      return cartIterator.id == cart.id
+    })
+
+    carts[cartIndex] = cart
+
+    return await fs.promises.writeFile(path, JSON.stringify(carts, null, "\t")) 
   }
-
-  async createCart() {
-    let carts = await this.#loadCartsFromPath()
-
-    carts.push({id: uuidV4(), products: []})
-
-    await fs.promises.writeFile(this.path, JSON.stringify(carts, null, '\t'))
-  }
-
-  async getCartById(id) {
-    let carts = await this.#loadCartsFromPath()
-
-    return carts.find((cart) => cart.id === id)
-  }
-
-  async addProductToCart(cid, pid) {
-    // cid es el id del carrito, pid es el id del producto
-    let carts = await this.#loadCartsFromPath()
-
-    let cart = carts.find((cart) => cart.id === cid) // Es el carrito al que le voy a agregar el producto
-
-    let product = cart.products.find((prod) => prod.product === pid ) // Es el producto, si existe
-
-    if (!product) {
-      product = {product: pid, quantity: 1}
-
-      cart.products.push(product)
-    }
-    else {
-      product.quantity += 1 // Como el producto ya existe, solo incremento su cantidad en 1
-    }
-
-    await fs.promises.writeFile(this.path, JSON.stringify(carts, null, '\t'))
-  }
-
 }
